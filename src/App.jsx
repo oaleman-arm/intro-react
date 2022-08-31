@@ -6,15 +6,44 @@ import TodoItem from './components/TodoItem';
 import TodoList from './components/TodoList';
 import CreateTodoButton from './components/CreateTodoButton';
 
-const defaultTodos = [
-  { text: 'Cortar Cebolla', completed: true },
-  { text: 'Tomar el curso de Intro a React', completed: true },
-  { text: 'Llorar con la Llorona', completed: false }
-]
+// const defaultItem = [
+//    { text: 'Cortar Cebolla', completed: true },
+//    { text: 'Tomar el curso de Intro a React', completed: true },
+//    { text: 'Llorar con la Llorona', completed: false }
+//  ]
+
+function useLocalStorage(itemName, initialValue){
+
+  const localStorageItem = localStorage.getItem(itemName);
+  let parseItem;
+
+  if (!localStorageItem){
+    localStorage.setItem(itemName, JSON.stringify(initialValue));
+    parseItem = initialValue; 
+  }else {
+      parseItem = JSON.parse(localStorageItem);
+      //parseItem = [];
+  }
+
+  const [item, setItem] = useState(parseItem);
+
+  const saveItem = (newItem) => { 
+    const stringifiedItem = JSON.stringify(newItem);
+    localStorage.setItem(itemName,stringifiedItem);
+    setItem(newItem);
+ };
+
+ return[
+  item,
+  saveItem,
+ ];
+
+}
 
 export default function App() {
-  const [todos, setTodos] = useState(defaultTodos);
-  const [searchValue, setSearchValue] = useState('');
+  
+const [todos,saveTodos] = useLocalStorage('TODOS_V1',[]);
+const [searchValue, setSearchValue] = useState('');
 
   const completedTodos = todos.filter(todo => !!todo.completed).length;
   const totalTodos = todos.length;
@@ -35,31 +64,26 @@ export default function App() {
 
 
 
+
   const completeTodo = (text) => {
     const todoIndex = todos.findIndex(todo => todo.text === text);
     const newTodos = [...todos];
-
     newTodos[todoIndex].completed = true;
-    //todos[todoIndex] = {
-    //text: todos[todoIndex].text,
-    //completed: true,
-    //}
-    setTodos(newTodos);
-  }
+    saveTodos(newTodos);
+  };
 
   const deleteTodo = (text) => {
     const todoIndex = todos.findIndex(todo => todo.text === text);
     const newTodos = [...todos];
-
     newTodos.splice(todoIndex, 1);
-    setTodos(newTodos);
-  }
+    saveTodos(newTodos);
+  };
 
   return (
     <>
       <TodoCounter
-        total={totalTodos}
-        completed={completedTodos}
+         totalTodos={totalTodos}
+         completedTodos={completedTodos}
       />
       <TodoSearch
         searchValue={searchValue}
@@ -81,3 +105,4 @@ export default function App() {
     </>
   )
 }
+
