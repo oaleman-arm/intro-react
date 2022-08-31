@@ -62,9 +62,6 @@ const [searchValue, setSearchValue] = useState('');
     );
   }
 
-
-
-
   const completeTodo = (text) => {
     const todoIndex = todos.findIndex(todo => todo.text === text);
     const newTodos = [...todos];
