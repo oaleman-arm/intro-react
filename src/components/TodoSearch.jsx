@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { useContext } from 'react';
 import '../css/TodoSearch.css';
+import { TodoContext } from '../TodoContext';
 
-function TodoSearch({ searchValue, setSearchValue }) {
+function TodoSearch() {
+
+  const { searchValue, setSearchValue } = useContext(TodoContext);
 
   //const [] = useState('');
 
@@ -14,7 +18,7 @@ function TodoSearch({ searchValue, setSearchValue }) {
     <>
       <input
         className="TodoSearch"
-        placeholder="Onion"
+        placeholder="Search"
         value={searchValue}
         onChange={onSearchValueChange}
       />
