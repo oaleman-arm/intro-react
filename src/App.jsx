@@ -5,7 +5,10 @@ import TodoSearch from './components/TodoSearch';
 import TodoItem from './components/TodoItem';
 import TodoList from './components/TodoList';
 import CreateTodoButton from './components/CreateTodoButton';
+import { TodoForm } from './components/TodoForm';
+import { Modal } from './components/Modal';
 import { TodoContext, TodoProvider } from './TodoContext';
+
 
 // const defaultItem = [
 //    { text: 'Cortar Cebolla', completed: true },
@@ -19,39 +22,52 @@ export default function App() {
 
   return (
     <>
-<TodoProvider>
-<TodoCounter  />
-      <TodoSearch/>
-     
-     <TodoContext.Consumer>
-     {({error, loading, searchedTodos, completeTodo, deleteTodo}) => {
-          return(
-            <TodoList
-        loading={loading}
-        error={error}>
+      <TodoProvider>
+        <TodoCounter />
+        <TodoSearch />
 
-        {error && <p>Desespérate, hubo un error...</p>}
-        {loading && <p>Estamos cargando, no desesperes...</p>}
-        {(!loading && !searchedTodos.length) && <p>¡Crea tu primer TODO!</p>}
+        <TodoContext.Consumer>
+          {({ error, loading, searchedTodos, completeTodo, deleteTodo, openModal, setOpenModal }) => {
+            return (
+              <>
+                <TodoList
+                  loading={loading}
+                  error={error}>
 
-        {searchedTodos.map(todo => (
-          <TodoItem
-            key={todo.text}
-            text={todo.text}
-            completed={todo.completed}
-            onComplete={() => completeTodo(todo.text)}
-            onDelete={() => deleteTodo(todo.text)}
-          />
-        ))}
-      </TodoList>
-          )
-     }}
+                  {error && <p>Oopss, it was an error...</p>}
+                  {loading && <p>Loading, please wait...</p>}
+                  {(!loading && !searchedTodos.length) && <p>¡Create your First Task!</p>}
 
-     </TodoContext.Consumer>
+                  {searchedTodos.map(todo => (
+                    <TodoItem
+                      key={todo.text}
+                      text={todo.text}
+                      completed={todo.completed}
+                      onComplete={() => completeTodo(todo.text)}
+                      onDelete={() => deleteTodo(todo.text)}
+                    />
+                  ))}
+                </TodoList>
 
-      <CreateTodoButton />
-</TodoProvider>
-   
+                {!!openModal && (
+                  <Modal>
+                    <TodoForm />
+                  </Modal>
+                )}
+
+                <CreateTodoButton setOpenModal={setOpenModal} />
+              </>
+            )
+          }}
+
+
+        </TodoContext.Consumer>
+
+
+
+      </TodoProvider>
+
+
     </>
   )
 }
